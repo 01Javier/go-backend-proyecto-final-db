@@ -28,5 +28,4 @@ func main() {
 	if err := server.Run(":" + cfg.ServerPort); err != nil {
 		log.Fatal("Error al iniciar el servidor:", err)
 	}
-} ////
-/////
+}
