@@ -2,7 +2,6 @@ package models
 
 import "time"
 
-// Prestamo representa la tabla Prestamo
 type Prestamo struct {
 	IDPrestamo              int        `json:"idPrestamo" db:"IDPRESTAMO"`
 	FechaPrestamo           time.Time  `json:"fechaPrestamo" db:"FECHAPRESTAMO"`
@@ -12,7 +11,6 @@ type Prestamo struct {
 	UsuarioID               int        `json:"usuarioId" db:"USUARIO_IDUSUARIO"`
 }
 
-// Ejemplar representa la tabla Ejemplar
 type Ejemplar struct {
 	Codigo     int    `json:"codigo" db:"CODIGO"`
 	Estado     string `json:"estado" db:"ESTADO"`
@@ -20,7 +18,6 @@ type Ejemplar struct {
 	PrestamoID int    `json:"prestamoId" db:"PRESTAMO_IDPRESTAMO"`
 }
 
-// PrestamoConDetalles es un modelo extendido con información completa del préstamo
 type PrestamoConDetalles struct {
 	Prestamo
 	NombreUsuario   string `json:"nombreUsuario"`
@@ -30,7 +27,6 @@ type PrestamoConDetalles struct {
 	DiasVencido     int    `json:"diasVencido,omitempty"`
 }
 
-// PrestamoVencido representa un préstamo vencido
 type PrestamoVencido struct {
 	IDPrestamo              int       `json:"idPrestamo"`
 	FechaPrestamo           time.Time `json:"fechaPrestamo"`
