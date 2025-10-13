@@ -1,0 +1,17 @@
+
+CREATE USER biblioteca_user IDENTIFIED BY "BibliotecaPass2025"
+DEFAULT TABLESPACE users
+TEMPORARY TABLESPACE temp
+QUOTA UNLIMITED ON users;
+
+GRANT CONNECT TO biblioteca_user;
+GRANT RESOURCE TO biblioteca_user;
+GRANT CREATE SESSION TO biblioteca_user;
+GRANT CREATE TABLE TO biblioteca_user;
+GRANT CREATE VIEW TO biblioteca_user;
+GRANT CREATE SEQUENCE TO biblioteca_user;
+GRANT CREATE TRIGGER TO biblioteca_user;
+
+GRANT UNLIMITED TABLESPACE TO biblioteca_user;
+
+COMMIT;
