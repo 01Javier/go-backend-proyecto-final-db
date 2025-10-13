@@ -1,5 +1,5 @@
 ## Correr el proyecto
-
+crear un archivo `.env` y configurar los parametros especificados en `.env.example`
 ```bash
 go mod tidy
 go run server/main.go
