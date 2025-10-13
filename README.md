@@ -1,79 +1,132 @@
-# University Library Management System
+## Correr el proyecto
 
-This project is a University Library Management System built using the Gin framework in Go, designed to facilitate user registration, book management, and loan tracking.
-
-## Project Structure
-
-```
-proyecto-bd-final
-├── cmd
-│   └── server
-│       └── main.go          # Entry point of the application
-├── internal
-│   ├── config
-│   │   └── database.go      # Database configuration
-│   ├── controllers
-│   │   ├── auth.go          # User authentication functions
-│   │   ├── book.go          # Book management functions
-│   │   └── loan.go          # Loan management functions
-│   ├── middleware
-│   │   └── auth.go          # Authentication middleware
-│   ├── models
-│   │   ├── user.go          # User model definition
-│   │   ├── book.go          # Book model definition
-│   │   └── loan.go          # Loan model definition
-│   ├── repository
-│   │   ├── user.go          # User repository functions
-│   │   ├── book.go          # Book repository functions
-│   │   └── loan.go          # Loan repository functions
-│   ├── routes
-│   │   └── routes.go        # Application routes
-│   └── services
-│       ├── auth.go          # User authentication logic
-│       ├── book.go          # Book management logic
-│       └── loan.go          # Loan management logic
-├── pkg
-│   └── utils
-│       └── response.go      # Utility functions for API responses
-├── migrations
-│   ├── 001_create_users_table.sql  # SQL for creating Users table
-│   ├── 002_create_books_table.sql  # SQL for creating Books table
-│   └── 003_create_loans_table.sql  # SQL for creating Loans table
-├── go.mod                     # Go module definition
-├── go.sum                     # Module dependency checksums
-└── README.md                  # Project documentation
+```bash
+go mod tidy
+go run server/main.go
 ```
 
-## Setup Instructions
+Por si acaso, ejecuta: `[Environment]::SetEnvironmentVariable("CGO_ENABLED", "1", "User")` (powershell)
 
-1. **Clone the repository:**
-   ```
-   git clone <repository-url>
-   cd proyecto-bd-final
-   ```
+---
 
-2. **Install dependencies:**
-   ```
-   go mod tidy
-   ```
+## Problema 1: Errores de compilación con godror
 
-3. **Configure the database:**
-   Update the `internal/config/database.go` file with your Oracle database connection settings.
+### Mensaje de error
 
-4. **Run migrations:**
-   Execute the SQL scripts in the `migrations` folder to set up the database schema.
+```
+# github.com/godror/godror
+undefined: VersionInfo
+undefined: StartupMode
+undefined: ShutdownMode
+too many errors
+```
 
-5. **Start the server:**
-   ```
-   go run cmd/server/main.go
-   ```
+### Causa
 
-## Functionality Overview
+Posiblemente falte `Oracle Instant Client` descargar [aqui](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 
-- **User Registration and Authentication:** Users can register and log in to the system.
-- **Book Management:** Admins can add, update, and retrieve book information.
-- **Loan Tracking:** Users can request loans for books and return them when done.
+luego copiar la carpeta a "C:\Program Files\Common Files\Oracle\instantclient_23_9" despues agregarla al PATH
 
-## License
 
-This project is licensed under the MIT License.
+Si no funciona, probar esto: 
+
+**Paso 1: Limpia el cache de modulos**
+
+```powershell
+go clean -modcache
+```
+
+**Paso 2: Usar una version anterior de godror**
+
+```powershell
+go get github.com/godror/godror@v0.40.3
+go mod tidy
+```
+
+
+**Otras versiones estables para probar:**
+
+- `v0.40.3` (recomendada)
+- `v0.33.3`
+- `v0.44.0` (última, pero puede tener problemas)
+
+---
+
+## Problema 2: Compilador GCC no encontrado
+
+### Mensaje de error
+
+```
+# runtime/cgo
+cgo: C compiler "gcc" not found: exec: "gcc": executable file not found in %PATH%
+```
+
+### Causa
+
+`godror` utiliza CGO (enlaces en C), lo que requiere un compilador de C en Windows.
+
+### Solución
+
+**Opción A: Instalar con Chocolatey (más fácil)**
+
+```powershell
+# Instala Chocolatey si no lo tienes
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Instala MinGW
+choco install mingw -y
+
+# Refresca el entorno
+refreshenv
+```
+
+**Opción B: Instalación manual de MinGW**
+
+1. Descarga MinGW-w64:
+   - URL: <https://github.com/niXman/mingw-builds-binaries/releases>
+   - Archivo: `x86_64-*-release-win32-seh-msvcrt-*.7z`
+
+2. Extrae en `C:\mingw64`
+
+3. Agrega a la variable PATH:
+
+```powershell
+$env:Path += ";C:\mingw64\bin"
+
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\mingw64\bin", "User")
+```
+
+4. Reiniciar PowerShell y verificar:
+
+```powershell
+gcc --version
+```
+
+**Opción C: Instalar MSYS2**
+
+1. Descarga desde: <https://www.msys2.org/>
+2. Instala y abre la terminal de MSYS2
+3. Ejecuta:
+
+```bash
+pacman -S mingw-w64-x86_64-gcc
+```
+
+4. Agrega a la variable PATH: `C:\msys64\mingw64\bin`
+
+**Después de instalar GCC:**
+
+```powershell
+# Habilita CGO
+$env:CGO_ENABLED = "1"
+
+# Configura de forma permanente
+[Environment]::SetEnvironmentVariable("CGO_ENABLED", "1", "User")
+
+# Prueba
+go run server/main.go
+```
+
+---
