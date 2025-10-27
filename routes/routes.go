@@ -16,12 +16,14 @@ func SetupRoutes(router *gin.Engine) {
 	adminHandler := handlers.NewAdminHandler()
 	estadisticasHandler := handlers.NewEstadisticasHandler()
 	bitacoraHandler := handlers.NewBitacoraHandler()
+	usuarioHandler := handlers.NewUsuarioHandler()
 
 	// Rutas públicas de autenticación
 	auth := router.Group("/api/auth")
 	{
 		auth.POST("/register", authHandler.Register)
 		auth.POST("/login", authHandler.Login)
+		auth.POST("/registerUsuario", usuarioHandler.RegisterUsuario)
 	}
 
 	// Rutas protegidas (requieren autenticación)
