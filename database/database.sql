@@ -1,3 +1,18 @@
+DROP TABLE Autor CASCADE CONSTRAINT;
+DROP TABLE Bitacora CASCADE CONSTRAINT;
+DROP TABLE Editorial CASCADE CONSTRAINT;
+DROP TABLE Ejemplar CASCADE CONSTRAINT;
+DROP TABLE Estudiante CASCADE CONSTRAINT;
+DROP TABLE Libro CASCADE CONSTRAINT;
+DROP TABLE LibroAutor CASCADE CONSTRAINT;
+DROP TABLE Permiso CASCADE CONSTRAINT;
+DROP TABLE Personal CASCADE CONSTRAINT;
+DROP TABLE Prestamo CASCADE CONSTRAINT;
+DROP TABLE Profesor CASCADE CONSTRAINT;
+DROP TABLE Roles CASCADE CONSTRAINT;
+DROP TABLE RolPermiso CASCADE CONSTRAINT;
+DROP TABLE Usuario CASCADE CONSTRAINT;
+DROP TABLE UsuarioRol CASCADE CONSTRAINT;
 
 CREATE TABLE Autor 
     ( 
@@ -111,9 +126,8 @@ CREATE TABLE Prestamo
      fechaPrestamo           DATE , 
      fechaDevolucionPrevista DATE , 
      fechaDevolucionReal     DATE , 
-     estado                  VARCHAR2 (50) , 
-     Usuario_idUsuario       INTEGER  NOT NULL , 
-     Devolucion_idDevolucion INTEGER  NOT NULL 
+     estado                  VARCHAR2 (100) , 
+     Usuario_idUsuario       INTEGER  NOT NULL
     ) 
 ;
 
@@ -157,7 +171,7 @@ CREATE TABLE Usuario
      idUsuario     INTEGER  NOT NULL , 
      nombre        VARCHAR2 (50) , 
      apellido      VARCHAR2 (50) , 
-     contrasenia   VARCHAR2 (100) , 
+     contrasenia   VARCHAR2 (200) , 
      correo        VARCHAR2 (200) , 
      telefono      INTEGER , 
      fechaRegistro DATE 

@@ -1,3 +1,19 @@
+DROP SEQUENCE usuario_seq;
+DROP SEQUENCE estudiante_seq;
+DROP SEQUENCE profesor_seq;
+DROP SEQUENCE personal_seq;
+DROP SEQUENCE roles_seq;
+DROP SEQUENCE usuariorol_seq;
+DROP SEQUENCE bitacora_seq;
+DROP SEQUENCE libro_seq;
+DROP SEQUENCE editorial_seq;
+DROP SEQUENCE autor_seq;
+DROP SEQUENCE libroautor_seq;
+DROP SEQUENCE prestamo_seq;
+DROP SEQUENCE ejemplar_seq;
+DROP SEQUENCE permiso_seq;
+DROP SEQUENCE rolpermiso_seq;
+
 CREATE SEQUENCE usuario_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE estudiante_seq START WITH 1000 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE profesor_seq START WITH 2000 INCREMENT BY 1 NOCACHE NOCYCLE;
@@ -219,29 +235,30 @@ VALUES (usuariorol_seq.NEXTVAL, 8, 4);
 -- 10. PRÉSTAMOS (Algunos activos, algunos vencidos)
 -- ============================================
 -- Préstamo activo
-INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario, Devolucion_idDevolucion) 
-VALUES (prestamo_seq.NEXTVAL, SYSDATE - 5, SYSDATE + 10, NULL, 'activo', 2, 0);
+INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario) 
+VALUES (prestamo_seq.NEXTVAL, SYSDATE - 5, SYSDATE + 10, NULL, 'activo', 2);
 
 -- Préstamo activo
-INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario, Devolucion_idDevolucion) 
-VALUES (prestamo_seq.NEXTVAL, SYSDATE - 3, SYSDATE + 12, NULL, 'activo', 3, 0);
+INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario) 
+VALUES (prestamo_seq.NEXTVAL, SYSDATE - 3, SYSDATE + 12, NULL, 'activo', 3);
 
 -- Préstamo vencido (fecha prevista ya pasó)
-INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario, Devolucion_idDevolucion) 
-VALUES (prestamo_seq.NEXTVAL, SYSDATE - 20, SYSDATE - 5, NULL, 'vencido', 4, 0);
+INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario) 
+VALUES (prestamo_seq.NEXTVAL, SYSDATE - 20, SYSDATE - 5, NULL, 'vencido', 4);
 
 -- Préstamo vencido
-INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario, Devolucion_idDevolucion) 
-VALUES (prestamo_seq.NEXTVAL, SYSDATE - 25, SYSDATE - 10, NULL, 'vencido', 5, 0);
+INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario) 
+VALUES (prestamo_seq.NEXTVAL, SYSDATE - 25, SYSDATE - 10, NULL, 'vencido', 5);
 
 -- Préstamo devuelto (completado)
-INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario, Devolucion_idDevolucion) 
-VALUES (prestamo_seq.NEXTVAL, SYSDATE - 30, SYSDATE - 16, SYSDATE - 15, 'devuelto', 2, 0);
+INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario) 
+VALUES (prestamo_seq.NEXTVAL, SYSDATE - 30, SYSDATE - 16, SYSDATE - 15, 'devuelto', 2);
 
 -- Préstamo activo profesor
-INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario, Devolucion_idDevolucion) 
-VALUES (prestamo_seq.NEXTVAL, SYSDATE - 2, SYSDATE + 28, NULL, 'activo', 6, 0);
+INSERT INTO Prestamo (idPrestamo, fechaPrestamo, fechaDevolucionPrevista, fechaDevolucionReal, estado, Usuario_idUsuario) 
+VALUES (prestamo_seq.NEXTVAL, SYSDATE - 2, SYSDATE + 28, NULL, 'activo', 6);
 
+SELECT * FROM PRESTAMO;
 -- ============================================
 -- 11. EJEMPLARES (Copias físicas de libros)
 -- ============================================
@@ -250,57 +267,57 @@ INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo)
 VALUES (ejemplar_seq.NEXTVAL, 'prestado', 1000, 1);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1000, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1000, 1);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1000, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1000, 1);
 
 -- Modern Operating Systems - 2 copias
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
 VALUES (ejemplar_seq.NEXTVAL, 'prestado', 1001, 2);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1001, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1001, 2);
 
 -- Clean Code - 3 copias
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
 VALUES (ejemplar_seq.NEXTVAL, 'prestado', 1003, 3);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1003, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1003, 3);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'mantenimiento', 1003, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'mantenimiento', 1003, 3);
 
 -- Introduction to Algorithms - 2 copias
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
 VALUES (ejemplar_seq.NEXTVAL, 'prestado', 1006, 4);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1006, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1006, 4);
 
 -- Design Patterns - 2 copias
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
 VALUES (ejemplar_seq.NEXTVAL, 'prestado', 1007, 6);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1007, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1007, 6);
 
 -- Resto de libros con 1-2 copias disponibles
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1002, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1002, 1);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1004, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1004, 2);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1005, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1005, 3);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1008, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1008, 4);
 
 INSERT INTO Ejemplar (codigo, estado, Libro_ISBN, Prestamo_idPrestamo) 
-VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1009, 0);
+VALUES (ejemplar_seq.NEXTVAL, 'disponible', 1009, 5);
 
 -- ============================================
 -- 12. PERMISOS
