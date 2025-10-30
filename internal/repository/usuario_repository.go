@@ -286,3 +286,58 @@ func (r *UsuarioRepository) UpdateUsuario(usuario *models.Usuario) error {
 
 	return nil
 }
+func (r *UsuarioRepository) GetPrestamosByUsuarioID(id int) ([]models.Prestamo, error) {
+	query := `
+        SELECT idPrestamo, Libro_idLibro, fechaPrestamo, fechaDevolucion, estado
+        FROM Prestamo
+        WHERE Usuario_idUsuario = :1
+        ORDER BY fechaPrestamo DESC
+    `
+
+	rows, err := r.db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var prestamos []models.Prestamo
+	for rows.Next() {
+		var p models.Prestamo
+		err := rows.Scan(&p.IDPrestamo, &p.FechaPrestamo, &p.FechaDevolucionPrevista, &p.Estado)
+		if err != nil {
+			return nil, err
+		}
+		prestamos = append(prestamos, p)
+	}
+
+	return prestamos, nil
+}
+
+func (r *UsuarioRepository) BuscarUsuariosPorNombreOCorreo(termino string) ([]models.UsuarioConRoles, error) {
+	query := `
+        SELECT idUsuario, nombre, apellido, correo, telefono, fechaRegistro
+        FROM Usuario
+        WHERE LOWER(nombre) LIKE '%' || LOWER(:1) || '%'
+           OR LOWER(apellido) LIKE '%' || LOWER(:1) || '%'
+           OR LOWER(correo) LIKE '%' || LOWER(:1) || '%'
+    `
+
+	rows, err := r.db.Query(query, termino)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var usuarios []models.UsuarioConRoles
+	for rows.Next() {
+		var u models.UsuarioConRoles
+		err := rows.Scan(&u.IDUsuario, &u.Nombre, &u.Apellido, &u.Correo, &u.Telefono, &u.FechaRegistro)
+		if err != nil {
+			return nil, err
+		}
+		u.Roles, _ = r.GetUsuarioRoles(u.IDUsuario)
+		usuarios = append(usuarios, u)
+	}
+
+	return usuarios, nil
+}
