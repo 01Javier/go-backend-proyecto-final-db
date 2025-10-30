@@ -286,28 +286,51 @@ func (r *UsuarioRepository) UpdateUsuario(usuario *models.Usuario) error {
 
 	return nil
 }
-func (r *UsuarioRepository) GetPrestamosByUsuarioID(id int) ([]models.Prestamo, error) {
+func (r *PrestamoRepository) GetPrestamosByUsuarioID(usuarioID int) ([]models.PrestamoConDetalles, error) {
 	query := `
-        SELECT idPrestamo, Libro_idLibro, fechaPrestamo, fechaDevolucion, estado
-        FROM Prestamo
-        WHERE Usuario_idUsuario = :1
-        ORDER BY fechaPrestamo DESC
+        SELECT p.idPrestamo, p.fechaPrestamo, p.fechaDevolucionPrevista, 
+               p.fechaDevolucionReal, p.estado,
+               l.titulo, e.codigo
+        FROM Prestamo p
+        JOIN Ejemplar e ON e.Prestamo_idPrestamo = p.idPrestamo
+        JOIN Libro l ON e.Libro_ISBN = l.ISBN
+        WHERE p.Usuario_idUsuario = :1
+        ORDER BY p.fechaPrestamo DESC
     `
 
-	rows, err := r.db.Query(query, id)
+	rows, err := r.db.Query(query, usuarioID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var prestamos []models.Prestamo
+	var prestamos []models.PrestamoConDetalles
 	for rows.Next() {
-		var p models.Prestamo
-		err := rows.Scan(&p.IDPrestamo, &p.FechaPrestamo, &p.FechaDevolucionPrevista, &p.Estado)
+		var prestamo models.PrestamoConDetalles
+		var fechaDevReal sql.NullTime
+
+		err := rows.Scan(
+			&prestamo.IDPrestamo,
+			&prestamo.FechaPrestamo,
+			&prestamo.FechaDevolucionPrevista,
+			&fechaDevReal,
+			&prestamo.Estado,
+			&prestamo.TituloLibro,
+			&prestamo.CodigoEjemplar,
+		)
 		if err != nil {
 			return nil, err
 		}
-		prestamos = append(prestamos, p)
+
+		if fechaDevReal.Valid {
+			prestamo.FechaDevolucionReal = &fechaDevReal.Time
+		}
+
+		if prestamo.Estado == "activo" && time.Now().After(prestamo.FechaDevolucionPrevista) {
+			prestamo.DiasVencido = int(time.Since(prestamo.FechaDevolucionPrevista).Hours() / 24)
+		}
+
+		prestamos = append(prestamos, prestamo)
 	}
 
 	return prestamos, nil

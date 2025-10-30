@@ -131,3 +131,19 @@ func (h *AdminHandler) DeleteUsuario(c *gin.Context) {
 
 	utils.SuccessResponse(c, "Usuario eliminado exitosamente", nil)
 }
+
+func (h *AdminHandler) BuscarUsuarios(c *gin.Context) {
+	termino := c.Query("q")
+	if termino == "" {
+		utils.ErrorResponse(c, "Parámetro de búsqueda vacío", http.StatusBadRequest)
+		return
+	}
+
+	resultados, err := h.usuarioRepo.BuscarUsuariosPorNombreOCorreo(termino)
+	if err != nil {
+		utils.ErrorResponseWithDetail(c, "Error en búsqueda", http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.SuccessResponse(c, "Usuarios encontrados", resultados)
+}

@@ -53,15 +53,17 @@ func (h *EstadisticasHandler) GetAllPrestamos(c *gin.Context) {
 
 // Historial de prestamos por usuario 👌
 func (h *UsuarioHandler) GetHistorialPrestamos(c *gin.Context) {
-	usuarioID, exists := c.Get("usuarioId")
+	usuarioIDRaw, exists := c.Get("usuarioId")
 	if !exists {
 		utils.ErrorResponse(c, "No autorizado", http.StatusUnauthorized)
 		return
 	}
 
-	prestamos, err := h.usuarioRepo.GetPrestamosByUsuarioID(usuarioID.(int))
+	usuarioID := usuarioIDRaw.(int)
+
+	prestamos, err := h.prestamoRepo.GetPrestamosByUsuarioID(usuarioID)
 	if err != nil {
-		utils.ErrorResponseWithDetail(c, "Error al obtener préstamos", http.StatusInternalServerError, err)
+		utils.ErrorResponseWithDetail(c, "Error al obtener historial de préstamos", http.StatusInternalServerError, err)
 		return
 	}
 

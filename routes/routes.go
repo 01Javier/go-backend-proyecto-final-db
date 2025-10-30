@@ -37,6 +37,7 @@ func SetupRoutes(router *gin.Engine) {
 		protected.GET("/estadisticas", estadisticasHandler.GetEstadisticas)
 		protected.GET("/prestamos", estadisticasHandler.GetAllPrestamos)
 		protected.GET("/prestamos/vencidos", estadisticasHandler.GetPrestamosVencidos)
+		protected.GET("/prestamos/usuario", usuarioHandler.GetHistorialPrestamos)
 
 		// Bitácora del usuario actual
 		protected.POST("/bitacora", bitacoraHandler.CreateRegistro)
@@ -60,6 +61,9 @@ func SetupRoutes(router *gin.Engine) {
 		admin.GET("/bitacora", bitacoraHandler.GetAllRegistros)
 		admin.GET("/bitacora/usuario/:id", bitacoraHandler.GetRegistrosByUsuario)
 		admin.GET("/bitacora/entidad/:entidad", bitacoraHandler.GetRegistrosByEntidad)
+
+		//Buscar usuarios por nombre/correo
+		admin.GET("/usuarios?q=abc", adminHandler.BuscarUsuarios)
 	}
 
 	// Ruta de health check

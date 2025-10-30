@@ -15,12 +15,14 @@ import (
 type UsuarioHandler struct {
 	usuarioRepo  *repository.UsuarioRepository
 	bitacoraRepo *repository.BitacoraRepository
+	prestamoRepo *repository.PrestamoRepository
 }
 
 func NewUsuarioHandler() *UsuarioHandler {
 	return &UsuarioHandler{
 		usuarioRepo:  repository.NewUsuarioRepository(database.DB),
 		bitacoraRepo: repository.NewBitacoraRepository(database.DB),
+		prestamoRepo: repository.NewPrestamoRepository(database.DB),
 	}
 }
 
@@ -145,31 +147,30 @@ func (h *UsuarioHandler) GetPerfilUsuario(c *gin.Context) {
 }
 
 func (h *UsuarioHandler) UpdatePerfilUsuario(c *gin.Context) {
-    usuarioID, exists := c.Get("usuarioId")
-    if !exists {
-        utils.ErrorResponse(c, "No autorizado", http.StatusUnauthorized)
-        return
-    }
+	usuarioID, exists := c.Get("usuarioId")
+	if !exists {
+		utils.ErrorResponse(c, "No autorizado", http.StatusUnauthorized)
+		return
+	}
 
-    var req models.UpdatePerfilRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        utils.ErrorResponseWithDetail(c, "Datos inválidos", http.StatusBadRequest, err)
-        return
-    }
+	var req models.UpdatePerfilRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponseWithDetail(c, "Datos inválidos", http.StatusBadRequest, err)
+		return
+	}
 
-    usuario := &models.Usuario{
-        IDUsuario: usuarioID.(int),
-        Nombre:    req.Nombre,
-        Apellido:  req.Apellido,
-        Correo:    req.Correo,
-        Telefono:  req.Telefono,
-    }
+	usuario := &models.Usuario{
+		IDUsuario: usuarioID.(int),
+		Nombre:    req.Nombre,
+		Apellido:  req.Apellido,
+		Correo:    req.Correo,
+		Telefono:  req.Telefono,
+	}
 
-    if err := h.usuarioRepo.UpdateUsuario(usuario); err != nil {
-        utils.ErrorResponseWithDetail(c, "Error al actualizar perfil", http.StatusInternalServerError, err)
-        return
-    }
+	if err := h.usuarioRepo.UpdateUsuario(usuario); err != nil {
+		utils.ErrorResponseWithDetail(c, "Error al actualizar perfil", http.StatusInternalServerError, err)
+		return
+	}
 
-    utils.SuccessResponse(c, "Perfil actualizado correctamente", nil)
+	utils.SuccessResponse(c, "Perfil actualizado correctamente", nil)
 }
-
