@@ -40,6 +40,9 @@ func SetupRoutes(router *gin.Engine) {
 
 		// Bitácora del usuario actual
 		protected.POST("/bitacora", bitacoraHandler.CreateRegistro)
+
+		// Actualizar perfil del usuario
+		protected.PUT("/profile", usuarioHandler.UpdatePerfilUsuario)
 	}
 
 	// Rutas de administrador (requieren autenticación + rol admin)

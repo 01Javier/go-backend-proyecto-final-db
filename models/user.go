@@ -71,3 +71,10 @@ type AuthResponse struct {
 	Token   string          `json:"token"`
 	Usuario UsuarioConRoles `json:"usuario"`
 }
+
+type UpdatePerfilRequest struct {
+    Nombre   string `json:"nombre" binding:"required"`
+    Apellido string `json:"apellido" binding:"required"`
+    Correo   string `json:"correo" binding:"required,email"`
+    Telefono int    `json:"telefono"`
+}

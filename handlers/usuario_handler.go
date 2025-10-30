@@ -47,6 +47,12 @@ func (h *UsuarioHandler) RegisterUsuario(c *gin.Context) {
 		FechaRegistro: time.Now(),
 	}
 
+	existingUser, _ := h.usuarioRepo.GetUsuarioByCorreo(req.Correo)
+	if existingUser != nil {
+		utils.ErrorResponse(c, "El correo ya está registrado", http.StatusConflict)
+		return
+	}
+
 	if err := h.usuarioRepo.CreateUsuario(usuario); err != nil {
 		utils.ErrorResponseWithDetail(c, "Error al crear usuario", http.StatusInternalServerError, err)
 		return
@@ -137,3 +143,33 @@ func (h *UsuarioHandler) GetPerfilUsuario(c *gin.Context) {
 
 	utils.SuccessResponse(c, "Perfil obtenido correctamente", usuarioConRoles)
 }
+
+func (h *UsuarioHandler) UpdatePerfilUsuario(c *gin.Context) {
+    usuarioID, exists := c.Get("usuarioId")
+    if !exists {
+        utils.ErrorResponse(c, "No autorizado", http.StatusUnauthorized)
+        return
+    }
+
+    var req models.UpdatePerfilRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        utils.ErrorResponseWithDetail(c, "Datos inválidos", http.StatusBadRequest, err)
+        return
+    }
+
+    usuario := &models.Usuario{
+        IDUsuario: usuarioID.(int),
+        Nombre:    req.Nombre,
+        Apellido:  req.Apellido,
+        Correo:    req.Correo,
+        Telefono:  req.Telefono,
+    }
+
+    if err := h.usuarioRepo.UpdateUsuario(usuario); err != nil {
+        utils.ErrorResponseWithDetail(c, "Error al actualizar perfil", http.StatusInternalServerError, err)
+        return
+    }
+
+    utils.SuccessResponse(c, "Perfil actualizado correctamente", nil)
+}
+
